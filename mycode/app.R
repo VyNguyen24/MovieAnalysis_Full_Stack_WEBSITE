@@ -7,7 +7,7 @@ library(scales)
 movie_data <- read.csv("Desktop/movie.csv")
 
 ui <- fluidPage(
-  titlePanel("Top 100 Movies by World Sales"),
+  titlePanel("Top Movie Distributor by World Movie Sales"),
   
   sidebarLayout(
     sidebarPanel(
