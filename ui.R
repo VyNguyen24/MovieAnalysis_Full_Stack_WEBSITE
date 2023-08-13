@@ -1,4 +1,39 @@
-ui <- fluidPage(
+library(shiny)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(plotly)
+library(tidyverse)
+library(patchwork)
+library(janitor)
+library(bslib)
+library(shinythemes)
+library(shinydashboard)
+library(tidyr)
+library(scales)
+
+
+data <- read_csv("Movies.csv")
+distributor_data <- data %>%
+  group_by(Distributor) %>%
+  mutate(num_movies = n())
+
+movie_data <- read.csv("Movies.csv")
+
+movies_data <- read.csv("Movies.csv", 
+                        header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
+all_films_by_license <- movies_data %>% select(License, World.Sales..in...)
+
+mean_money_film <- all_films_by_license %>% group_by(License) %>% 
+  summarise(avg_revenue = mean(World.Sales..in...)) %>% 
+  filter(License != "NA")
+
+ui <- navbarPage("Creating The Optimal Movie", 
+              
+### 1st tab
+                 
+tabPanel("Introduction",  fluidPage(
   h1("Creating The Optimal Movie", align="center"),
   img("Star Wars: The Force Awakens; The highest-ranked film from our dataset", 
       src = "/Users/dhruv/Downloads/image_24641330.jpeg"),
@@ -39,7 +74,7 @@ ui <- fluidPage(
   h3("Dataset"),
   p("The dataset used for this project came from Kaggle:"),
   a("Top 1000 Highest Grossing Movies", 
-  href = "https://www.kaggle.com/datasets/sanjeetsinghnaik/top-1000-highest-grossing-movies"),
+    href = "https://www.kaggle.com/datasets/sanjeetsinghnaik/top-1000-highest-grossing-movies"),
   h3("Origin of Dataset"),
   p("The data was updated 2 years ago by Sanjeet Singh Naik. This data was collected from 
   various websites and combined for use in a variety of data operations. 
@@ -60,4 +95,71 @@ ui <- fluidPage(
     not fully represent the whole.  Furthermore, the dataset only includes movies from 
     the United States, so it cannot be used to analyze other countries or to examine 
     diversity."),
+    )
+  ),
+
+  ### Stuff for 2nd tab
+
+  tabPanel("Effect of Choosing a Distributor on Movie Production", fluidPage(
+    titlePanel("Movie Distributors vs Number of Movies"),
+    theme = bs_theme(version = 4, bootswatch = "minty"),
+    fluidRow(
+      column(width = 3, height = 4,
+             checkboxGroupInput("option", "Choose License",
+                                c("PG-13" = "PG-13",
+                                  "G" = "G",
+                                  "R" = "R"))),
+      column(width = 5,
+             sliderInput("number", "Number of Movies:",
+                         min = 0, max = 158, c(0,158))),
+      column(width = 3,
+             selectInput("distributor_filter", "Select Distributor:",
+                         choices = c("ALL", unique(distributor_data$Distributor))))
+    ),
+    fluidRow(
+      column(width = 12, height = 33,
+             plotlyOutput("distributor_plot")
+        ),
+    p("To answer the research question 'which distributors produce the most movies' as well 
+    as the productivity of movie production across distributors, I use a bar chart to 
+    visualize this comparison."),
+    p("As 'Distributors' is a categorical value, using bar chart will provide a 
+      straightforward way to observe the frequency or count of each movie in the dataset. 
+      Additionally, it displays the category labels clearly and arranges the value assigned 
+      to each distributor in a tidy manner."),
+    p("The X axis in this plot represents the overall number of films, and the Y axis 
+      represents the various distributors. In comparison to other distributors, 
+      Warner Bros. appears to produce the most movies.")
+      )
+    )
+  ),
+
+### Stuff for 3rd tab
+
+  tabPanel("Effect of Choosing a Distributor on Movie World Sales", fluidPage(
+    titlePanel("Top Movie Distributor by World Movie Sales"),
+    
+    sidebarLayout(
+      sidebarPanel(
+        selectInput("distributor_filter", "Filter by Distributor:", 
+                    choices = c("All", unique(movie_data$Distributor))),
+        textInput("movie_title_input", "Enter Movie Title:"),
+        sliderInput("world_sales_slider", "World Sales Range:",
+                    min = min(movie_data$World.Sales..in...),
+                    max = max(movie_data$World.Sales..in...),
+                    value = c(min(movie_data$World.Sales..in...), max(movie_data$World.Sales..in...)),
+                    step = 1),
+        uiOutput("selected_movie_info")
+      ),
+      mainPanel(
+        plotlyOutput("top_movies_scatter_plot"),
+        verbatimTextOutput("movie_info_output")
+        )
+      )
+    )
+  ),
+  tabPanel("Effect of Movie Rating on Movie World Sales", fluidPage(
+    h1("Worldwide Sales vs Movie Licenses")
+    )
+  )
 )

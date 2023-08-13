@@ -4,7 +4,7 @@ library(plotly)
 library(dplyr)
 library(tidyr)
 library(scales)
-movie_data <- read.csv("Desktop/movie.csv")
+movie_data <- read.csv("Movies.csv")
 
 ui <- fluidPage(
   titlePanel("Top Movie Distributor by World Movie Sales"),
