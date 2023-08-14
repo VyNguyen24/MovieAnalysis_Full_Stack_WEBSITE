@@ -43,10 +43,6 @@ adding_month_table <- data.table(adding_month)
 trimming_month <- data.frame(adding_month_table[, 
 release_month := str_trim(release_month, side = c("both"))])
 
-January <- filter_by_month("January")
-
-February <- filter_by_month("February")
-
 filter_by_month <- function(month){
   trimming_month %>% filter(release_month == month) %>% 
   arrange(release_year) %>% group_by(release_year) %>% select(release_year) %>% count()
