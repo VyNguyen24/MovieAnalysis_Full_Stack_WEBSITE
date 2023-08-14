@@ -11,7 +11,8 @@ library(shinythemes)
 library(shinydashboard)
 library(tidyr)
 library(scales)
-
+library(stringr)
+library(data.table)
 
 data <- read_csv("Movies.csv")
 distributor_data <- data %>%
@@ -140,10 +141,4 @@ output$top_movies_scatter_plot <- renderPlotly({
       ""
     }
   })
-  dhruv_bar_plot <- ggplot(mean_money_film, aes(x = License, y = avg_revenue)) +
-  geom_bar(stat = "identity") + labs(y = "Average Worldwide Sales (Dollars)", 
-  x = "Movie License (Rating)", title = "Worldwide Sales vs Movie Licenses", 
-  color = "Legend") + theme(plot.title = element_text(hjust = 0.5)) 
-  
-  ggplotly(dhruv_bar_plot)
 }

@@ -11,6 +11,8 @@ library(shinythemes)
 library(shinydashboard)
 library(tidyr)
 library(scales)
+library(stringr)
+library(data.table)
 
 
 data <- read_csv("Movies.csv")
@@ -63,12 +65,13 @@ tabPanel("Introduction",  fluidPage(
   under multiple genres on box office performance can provide insights into audience responsiveness to genre-blending and diverse storytelling. 
   This knowledge can foster new creation, and storytelling, and enhance the viewer experience."), 
   h2("What are our questions?"),
-  p("- Does the run time affect the number of sales?"), 
+  p("- Does the the distributor affect the number of sales?"), 
   p("- Which distributor produces the highest number of films in the top 1000 movies?"),
-  p("- Between which years did certain distributors peak in terms of sales and movies made?"),
   p("- Has the amount of movie releases across the months of the year changed 
   over the duration of this dataset?"),
-  p("- How does the generic tag offered by distributors impact the Movie Box office 
+  p("- Does the movie license offered by distributors impact the Movie Box office 
+    performance?"),
+  p("- Does the movie genre offered by distributors impact the Movie Box office 
     performance?"),
   h2("What data are we using for this?"),
   h3("Dataset"),
@@ -100,7 +103,7 @@ tabPanel("Introduction",  fluidPage(
 
   ### Stuff for 2nd tab
 
-  tabPanel("Effect of Choosing a Distributor on Movie Production", fluidPage(
+  tabPanel("Distributor vs Movie Production", fluidPage(
     titlePanel("Movie Distributors vs Number of Movies"),
     theme = bs_theme(version = 4, bootswatch = "minty"),
     fluidRow(
@@ -136,7 +139,7 @@ tabPanel("Introduction",  fluidPage(
 
 ### Stuff for 3rd tab
 
-  tabPanel("Effect of Choosing a Distributor on Movie World Sales", fluidPage(
+  tabPanel("Distributor vs Movie World Sales", fluidPage(
     titlePanel("Top Movie Distributor by World Movie Sales"),
     
     sidebarLayout(
@@ -158,8 +161,11 @@ tabPanel("Introduction",  fluidPage(
       )
     )
   ),
-  tabPanel("Effect of Movie Rating on Movie World Sales", fluidPage(
+  tabPanel("Movie Rating vs Movie World Sales", fluidPage(
     h1("Worldwide Sales vs Movie Licenses")
     )
-  )
+  ),
+  tabPanel("Movie Production by Month over time"),
+  tabPanel("Genre vs Movie World Sales"),
+  tabPanel("Summary and Overall Conclusions/Takeaways")
 )
