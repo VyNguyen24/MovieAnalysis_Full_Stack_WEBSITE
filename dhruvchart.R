@@ -21,6 +21,7 @@ library(data.table)
 ### Source: https://canvas.uw.edu/courses/1643812/files/folder/Lectures_PG?preview=108264142
 ### Source: https://shiny.posit.co/r/gallery/widgets/widget-gallery/
 ### Source: https://shiny.posit.co/r/reference/shiny/1.7.4/sliderinput
+### Source: https://gallery.shinyapps.io/081-widgets-gallery/
 ### Source: https://stackoverflow.com/questions/24173595/r-shiny-using-a-slider-value-to-no-decimal-places
 
 movies_data <- read.csv("Movies.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
