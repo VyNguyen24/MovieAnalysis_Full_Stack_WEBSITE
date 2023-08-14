@@ -29,6 +29,107 @@ mean_money_film <- all_films_by_license %>% group_by(License) %>%
   summarise(avg_revenue = mean(World.Sales..in...)) %>% 
   filter(License != "NA")
 
+all_data_one_frame <- data.frame(January = January_final$n, February = February_final$n, 
+March = March_final$n, April = April_final$n, May = May_final$n, June = June_final$n, 
+July = July_final$n,August = August_final$n, September = September_final$n, 
+October = October_final$n, November = November_final$n, December = December_final$n)
+
+filtered_data <- movies_data %>% select(Release.Date) %>% 
+  filter(Release.Date != "NA")
+
+adding_year <- filtered_data %>% mutate(release_year = str_sub(Release.Date, 
+                                                               str_length(Release.Date) - 4, str_length(Release.Date)))
+
+adding_year_table <- data.table(adding_year)
+
+casting_year <- data.frame(adding_year_table[ , release_year := as.integer(release_year)])
+
+adding_month <- casting_year %>% mutate(release_month = 
+                                          str_sub(Release.Date, 1, str_length(Release.Date) - 8))
+
+adding_month_table <- data.table(adding_month)
+
+trimming_month <- data.frame(adding_month_table[, 
+                                                release_month := str_trim(release_month, side = c("both"))])
+
+filter_by_month <- function(month){
+  trimming_month %>% filter(release_month == month) %>% 
+    arrange(release_year) %>% group_by(release_year) %>% select(release_year) %>% count()
+}
+
+January <- filter_by_month("January")
+
+February <- filter_by_month("February")
+
+March <- filter_by_month("March")
+
+April <- filter_by_month("April")
+
+May <- filter_by_month("May")
+
+June <- filter_by_month("June")
+
+July <- filter_by_month("July")
+
+August <- filter_by_month("August")
+
+September <- filter_by_month("September")
+
+October <- filter_by_month("October")
+
+November <- filter_by_month("November")
+
+December <- filter_by_month("December")
+
+add_sequence_function <- function(dataset){
+  year = 1970
+  while (year <= 2023){
+    if (any(dataset$release_year) == year){
+    }
+    else {
+      dataset[nrow(dataset) + 1,] <- list(year, 0)
+      year = year + 1
+    }
+  }
+  dataset %>% arrange(release_year)
+  return (dataset)
+}
+
+creating_plottable_df <- function(dataset){
+  add_sequence_function(dataset) %>% arrange(release_year) %>% 
+    group_by(release_year) %>% arrange(release_year, -n) %>% 
+    filter(duplicated(release_year) == FALSE)
+}
+
+January_final <- creating_plottable_df(January) 
+
+February_final <- creating_plottable_df(February)
+
+March_final <- creating_plottable_df(March)
+
+April_final <- creating_plottable_df(April)
+
+May_final <- creating_plottable_df(May)
+
+June_final <- creating_plottable_df(June)
+
+July_final <- creating_plottable_df(July)
+
+August_final <- creating_plottable_df(August)
+
+September_final <- creating_plottable_df(September)
+
+October_final <- creating_plottable_df(October)
+
+November_final <- creating_plottable_df(November)
+
+December_final <- creating_plottable_df(December)
+
+colors <- c("January" = "purple", "February" = "green","March" = "red", 
+            "April" = "lightskyblue", "May" = "orange", "June" = "black", 
+            "July" = "chocolate4", "August" = "darkturquoise", "September" = "forestgreen", 
+            "October" = "hotpink", "November" = "blue", "December" = "seashell4")
+
 server <- function(input, output){
   
   ### Stuff for 2nd tab
@@ -63,31 +164,19 @@ server <- function(input, output){
     # plotly
     ggplotly(p)
   })
-  
+ 
+  output$vy_plot <- renderPlotly({
+    filtered_data <- distributor_data
+    p <- ggplot(filtered_data, aes(y = Distributor, x = num_movies, fill = Distributor)) +
+      geom_col() +
+      theme_minimal() +
+      labs(title = "Distributors vs Number of Movies", x = "Number of Movies", y = "Distributors") +
+      theme(legend.position = "none") +
+      xlim(0, max(filtered_data$num_movies))
+    ggplotly(p)
+  }) 
   
   ### Stuff for 3rd tab
-  output$top_movies_scatter_plot <- renderPlotly({
-    filtered_movies <- movie_data
-    if (!is.null(input$distributor_filter) && input$distributor_filter != "All") {
-      filtered_movies <- filtered_movies %>%
-        filter(Distributor == input$distributor_filter)
-    }
-    if (!is.null(input$movie_title_input) && input$movie_title_input != "") {
-      filtered_movies <- filtered_movies %>%
-        filter(str_detect(Title, fixed(input$movie_title_input)))
-    }
-    filtered_movies <- filtered_movies %>%
-      filter(World.Sales..in... >= input$world_sales_slider[1] &
-               World.Sales..in... <= input$world_sales_slider[2])
-    scatter_plot <- ggplot(filtered_movies, aes(x = reorder(Distributor, World.Sales..in...), y = World.Sales..in...)) +
-      geom_point(aes(text = paste("Movie:", Title, "<br>World Sales:", scales::comma(World.Sales..in...))), 
-                 color = "steelblue", size = 3) +
-      labs(x = "Distributor", y = "World Sales", title = "Movies by World Sales") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-      scale_y_continuous(labels = scales::comma)
-    
-    ggplotly(scatter_plot, tooltip = "text")
-  })
   
   output$top_movies_scatter_plot <- renderPlotly({
     filtered_movies <- movie_data
@@ -158,6 +247,10 @@ server <- function(input, output){
   output$barchart <- renderPlotly({
     ggplotly(bar_chart)
   })
+  
+  output$pagna_bar_chart <- renderPlotly({
+    ggplotly(bar_chart)
+  })
  
   ### Stuff for License vs Sales chart
   dhruv_bar_plot <- ggplot(mean_money_film, aes(x = License, y = avg_revenue)) +
@@ -168,4 +261,9 @@ server <- function(input, output){
   output$plot <- renderPlotly({
     ggplotly(dhruv_bar_plot)
   })
+  
+  output$dhruv_plot <- renderPlotly({
+    ggplotly(dhruv_bar_plot)
+  })
+  
 }

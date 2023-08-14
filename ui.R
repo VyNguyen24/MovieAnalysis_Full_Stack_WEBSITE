@@ -126,6 +126,11 @@ colors <- c("January" = "purple", "February" = "green","March" = "red",
             "July" = "chocolate4", "August" = "darkturquoise", "September" = "forestgreen", 
             "October" = "hotpink", "November" = "blue", "December" = "seashell4")
 
+all_data_one_frame <- data.frame(January = January_final$n, February = February_final$n, 
+March = March_final$n, April = April_final$n, May = May_final$n, June = June_final$n, 
+July = July_final$n,August = August_final$n, September = September_final$n, 
+October = October_final$n, November = November_final$n, December = December_final$n)
+
 ui <- navbarPage("Creating The Optimal Movie", 
               
 ### 1st tab
@@ -217,7 +222,8 @@ tabPanel("Introduction",  fluidPage(
     fluidRow(
       column(width = 12, height = 33,
              plotlyOutput("distributor_plot")
-        ),
+        )
+      ),
     p("To answer the research question 'which distributors produce the most movies' as well 
     as the productivity of movie production across distributors, I use a bar chart to 
     visualize this comparison."),
@@ -239,7 +245,6 @@ tabPanel("Introduction",  fluidPage(
     p("By doing this, we are able to see how many movies each distributor is distributing.
       With all three of these interactive widgets, we were able to compare the quantity of films
       released by various distributors in more detail.")
-      )
     )
   ),
 
@@ -321,8 +326,16 @@ tabPanel("Genre vs Movie World Sales", fluidPage(
     )
   )
 ),
-tabPanel("Summary and Overall Conclusions/Takeaways", fluidPage(
-    titlePanel("Genre vs Movie World Sales")
+tabPanel("Summary", fluidPage(
+    titlePanel("Overall Conclusions & Takeaways"),
+    mainPanel(
+        plotlyOutput("dhruv_plot"),
+        p(""),
+        plotlyOutput("pagna_bar_chart"),
+        p(""),
+        plotlyOutput("vy_plot"),
+        p("")
+      )
     ) 
   )
 )
