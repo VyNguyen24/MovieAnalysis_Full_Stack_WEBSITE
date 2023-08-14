@@ -88,7 +88,7 @@ tabPanel("Introduction",  fluidPage(
   trends. Additionally, by collecting information on domestic and foreign sales, this data 
   is also made for business purposes by giving investors a more thorough picture of the 
   movie's revenue."),
-  h3("Ethical Questions (Questions of Power:"),
+  h3("Ethical Questions (Questions of Power):"),
   p("- Is the dataset biased in any way that might favor a particular genre?"),
   p("- Does the content of the movies reflect racism or sensitivity to a particular 
   culture or minority group?"),
@@ -161,11 +161,40 @@ tabPanel("Introduction",  fluidPage(
       )
     )
   ),
+
   tabPanel("Movie Rating vs Movie World Sales", fluidPage(
-    h1("Worldwide Sales vs Movie Licenses")
+    h1("Worldwide Sales vs Movie Licenses"),
+    mainPanel(
+      plotlyOutput("plot"),
+      p("I chose a bar graph to represent the relationship between movie license/rating (a categorical variable) and the average worldwide sales in dollars (a continuous variable)."),
+
+      p("I did so because bars are the best way to show the quantitative differences between the movie license categories represented on the X-axis due to the space they encompass, making said differences in average worldwide sales more noticeable to the viewer's eye.
+
+I think this chart is especially useful because it could provide useful information to a potential film director on which movie rating to design/cater to based on the highest mean influx of money worldwide (based on the top 1000 domestically highest-performing movies recorded).
+
+While all of the movie licenses make the same income on the scale of hundreds of millions (according to this dataset), rated R movies from this dataset perform the lowest in terms of mean worldwide sales.
+
+G-rated and PG-13-rated films from this dataset averaged almost identically with PG-rated films from this dataset averaging slightly less at dollars."),
+
+      p("The main takeaway from this bar graph is that according to this dataset, a film director designing a movie script for any of these 4 ratings will make money on the same scale, but to optimize worldwide sales, they should significantly prioritize G & PG-13-rated films over R-rated films."),
+
+      p("-   Source: Sheamin's video on Panopto (wouldn't knit if I included the link)"),
+      )
     )
   ),
+
   tabPanel("Movie Production by Month over time"),
-  tabPanel("Genre vs Movie World Sales"),
+
+  tabPanel("Genre vs Movie World Sales", fluidPage(
+    titlePanel("Genre vs Movie World Sales"),
+    mainPanel(
+      plotlyOutput("barchart"),
+      p("Selecting the appropriate type of chart or graph is vital when visualizing data. It guarantees that the information is presented in a clear and understandable format, especially when dealing with categorical values like the different genres of the top 1000 highest-grossing movies."),
+      p("A bar chart is often the most effective choice in this case as it provides a simple way to comprehend the data. The chart reveals that some movies belong to more than one genre, making it difficult to determine the most prevalent genre. Nevertheless, the chart highlights the genre that appears frequently in the top 1000 highest-earning movies, considering the revenue generated globally by each genre. This enables us to identify the frequently occurring genre while providing a comprehensive overview of the data.
+        ")
+      )
+    )
+  ),
+
   tabPanel("Summary and Overall Conclusions/Takeaways")
 )
