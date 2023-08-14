@@ -25,12 +25,6 @@ movie_data <- read.csv("Movies.csv")
 movies_data <- read.csv("Movies.csv", 
                         header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
-all_films_by_license <- movies_data %>% select(License, World.Sales..in...)
-
-mean_money_film <- all_films_by_license %>% group_by(License) %>% 
-  summarise(avg_revenue = mean(World.Sales..in...)) %>% 
-  filter(License != "NA")
-
 ui <- navbarPage("Creating The Optimal Movie", 
               
 ### 1st tab
@@ -38,7 +32,7 @@ ui <- navbarPage("Creating The Optimal Movie",
 tabPanel("Introduction",  fluidPage(
   h1("Creating The Optimal Movie", align="center"),
   img("Star Wars: The Force Awakens; The highest-ranked film from our dataset", 
-      src = "/Users/dhruv/Downloads/image_24641330.jpeg"),
+      src = "/image_24641330.jpeg"),
   h2("Main Question:"),
   p("How do various factors impact the box office performance of movies?"),
   p("This research project aims to analyze the top 1000 highest-grossing movies, 
@@ -161,11 +155,6 @@ tabPanel("Introduction",  fluidPage(
       )
     )
   ),
-  tabPanel("Movie Rating vs Movie World Sales", fluidPage(
-    h1("Worldwide Sales vs Movie Licenses")
-    )
-  ),
   tabPanel("Movie Production by Month over time"),
-  tabPanel("Genre vs Movie World Sales"),
   tabPanel("Summary and Overall Conclusions/Takeaways")
 )

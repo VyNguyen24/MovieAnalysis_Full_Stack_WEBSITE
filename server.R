@@ -66,7 +66,6 @@ server <- function(input, output){
   
   
   ### Stuff for 3rd tab
-  
   output$top_movies_scatter_plot <- renderPlotly({
     filtered_movies <- movie_data
     if (!is.null(input$distributor_filter) && input$distributor_filter != "All") {
@@ -90,7 +89,7 @@ server <- function(input, output){
     ggplotly(scatter_plot, tooltip = "text")
   })
   
-output$top_movies_scatter_plot <- renderPlotly({
+  output$top_movies_scatter_plot <- renderPlotly({
     filtered_movies <- movie_data
     if (!is.null(input$distributor_filter) && input$distributor_filter != "All") {
       filtered_movies <- filtered_movies %>%
