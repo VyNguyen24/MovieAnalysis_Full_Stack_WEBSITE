@@ -224,6 +224,7 @@ tabPanel("Introduction",  fluidPage(
       Warner Bros. appears to produce the most movies."),
     p("By creating the checkbox showing three options for license, this enables us
       to vary the number of movies produced by various distributors falling under those categories.
+<<<<<<< HEAD
       Warner Bros. is the top distributor for movies with license PG-13 and R, while 
       Walt Disney Studios Motion Picture produces most movies with license G."),
     p("Additionally, viewers can adjust the number of movies displayed using a range slider,
@@ -233,6 +234,16 @@ tabPanel("Introduction",  fluidPage(
     p("By doing this, we are able to see how many movies each distributor is distributing.
       With all three of these interactive widgets, we were able to compare the quantity of films
       released by various distributors in more detail.")
+=======
+      Like Warner Bros. is the top distributor for movies with license PG-13 and R, while Walt Disney
+      Studios Motion Picture produces most movies with license G.
+      Additionally, viewers can adjust the number of movies displayed using a range slider,
+      which will allow us to focus on distributors that fall within a particular range.
+      The third widget is a filter bar that allows us to choose which distributors to display.
+      By doing this, we are able to see how many movies each distributor is distributing.
+      With all three of these interactive widgets, we were able to compare the quantity of films
+      released by various distributors in more detail."),
+>>>>>>> ff3c62fea4b2f555850e535baa331f8217ade60e
       )
     )
   ),
@@ -269,6 +280,8 @@ tabPanel("Introduction",  fluidPage(
       and how well they perform in terms of revenue.")
     )
   ),
+### 4th tab
+
   tabPanel("Movie Rating vs Movie World Sales", fluidPage(
     titlePanel("Worldwide Sales vs Movie Licenses"),
     mainPanel(
@@ -295,8 +308,25 @@ tabPanel("Introduction",  fluidPage(
       & PG-13-rated films over R-rated films.")
     )
   )
-),
+  ),
+
+  tabPanel("Movie Production by Month over time"),
+
+### 6th tab
+
+  tabPanel("Genre vs Movie World Sales", fluidPage(
+    titlePanel("Genre vs Movie World Sales"),
+    mainPanel(
+      plotlyOutput("barchart"),
+      p("Selecting the appropriate type of chart or graph is vital when visualizing data. It guarantees that the information is presented in a clear and understandable format, especially when dealing with categorical values like the different genres of the top 1000 highest-grossing movies."),
+      p("A bar chart is often the most effective choice in this case as it provides a simple way to comprehend the data. The chart reveals that some movies belong to more than one genre, making it difficult to determine the most prevalent genre. Nevertheless, the chart highlights the genre that appears frequently in the top 1000 highest-earning movies, considering the revenue generated globally by each genre. This enables us to identify the frequently occurring genre while providing a comprehensive overview of the data.
+        ")
+      )
+    )
+  ),
+
 tabPanel("Movie Production by Month over time"),
+
 tabPanel("Genre vs Movie World Sales", fluidPage(
   titlePanel("Genre vs Movie World Sales"),
   mainPanel(
