@@ -140,4 +140,32 @@ server <- function(input, output){
       ""
     }
   })
+ 
+  ### Stuff for Genre vs Sales chart
+  genre_sales <- movie_data %>%
+    separate_rows(Genre, sep = ", ") %>%  
+    group_by(Genre) %>% 
+    summarise(Total_Sales = sum(World.Sales..in...)) %>% 
+    arrange(desc(Total_Sales)) %>%
+    mutate(Genre = str_replace_all(Genre, "['\\[\\]]", ""))
+  
+  bar_chart <- ggplot(genre_sales, aes(x = reorder(Genre, Total_Sales), y = Total_Sales)) +
+    geom_col(fill = "steelblue") +
+    labs(x = "Genre", y = "Total Worldwide Sales", title = "Most Popular Movie Genres by Sales") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    scale_y_continuous(labels = scales::comma)
+  
+  output$barchart <- renderPlotly({
+    ggplotly(bar_chart)
+  })
+ 
+  ### Stuff for License vs Sales chart
+  dhruv_bar_plot <- ggplot(mean_money_film, aes(x = License, y = avg_revenue)) +
+    geom_bar(stat = "identity") + labs(y = "Average Worldwide Sales (Dollars)", 
+                                       x = "Movie License (Rating)", title = "Worldwide Sales vs Movie Licenses", 
+                                       color = "Legend") + theme(plot.title = element_text(hjust = 0.5))
+  
+  output$plot <- renderPlotly({
+    ggplotly(dhruv_bar_plot)
+  })
 }
