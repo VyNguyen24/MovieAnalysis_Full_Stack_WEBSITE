@@ -66,7 +66,6 @@ server <- function(input, output){
   
   
   ### Stuff for 3rd tab
-  
   output$top_movies_scatter_plot <- renderPlotly({
     filtered_movies <- movie_data
     if (!is.null(input$distributor_filter) && input$distributor_filter != "All") {
@@ -90,7 +89,7 @@ server <- function(input, output){
     ggplotly(scatter_plot, tooltip = "text")
   })
   
-output$top_movies_scatter_plot <- renderPlotly({
+  output$top_movies_scatter_plot <- renderPlotly({
     filtered_movies <- movie_data
     if (!is.null(input$distributor_filter) && input$distributor_filter != "All") {
       filtered_movies <- filtered_movies %>%
@@ -162,9 +161,9 @@ output$top_movies_scatter_plot <- renderPlotly({
  
   ### Stuff for License vs Sales chart
   dhruv_bar_plot <- ggplot(mean_money_film, aes(x = License, y = avg_revenue)) +
-    geom_bar(stat = "identity") + labs(y = "Average Worldwide Sales (Dollars)", 
-                                       x = "Movie License (Rating)", title = "Worldwide Sales vs Movie Licenses", 
-                                       color = "Legend") + theme(plot.title = element_text(hjust = 0.5))
+  geom_bar(stat = "identity") + labs(y = "Average Worldwide Sales (Dollars)", 
+  x = "Movie License (Rating)", title = "Worldwide Sales vs Movie Licenses", 
+  color = "Legend") + theme(plot.title = element_text(hjust = 0.5))
   
   output$plot <- renderPlotly({
     ggplotly(dhruv_bar_plot)

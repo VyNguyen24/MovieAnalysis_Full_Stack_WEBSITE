@@ -18,6 +18,10 @@ library(data.table)
 ### Source: https://sparkbyexamples.com/r-programming/add-row-to-dataframe-in-r/#:~:text=To%20add%20a%20new%20row%20to%20the%20DataFrame%20(data.,the%20end%20of%20the%20dataframe.
 ### Source: https://stackoverflow.com/questions/24011246/deleting-rows-that-are-duplicated-in-one-column-based-on-the-conditions-of-anoth
 ### Source: ### https://r-graph-gallery.com/line-chart-ggplot2.html
+### Source: https://canvas.uw.edu/courses/1643812/files/folder/Lectures_PG?preview=108264142
+### Source: https://shiny.posit.co/r/gallery/widgets/widget-gallery/
+### Source: https://shiny.posit.co/r/reference/shiny/1.7.4/sliderinput
+### Source: https://stackoverflow.com/questions/24173595/r-shiny-using-a-slider-value-to-no-decimal-places
 
 movies_data <- read.csv("Movies.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
@@ -38,10 +42,6 @@ adding_month_table <- data.table(adding_month)
 
 trimming_month <- data.frame(adding_month_table[, 
 release_month := str_trim(release_month, side = c("both"))])
-
-January <- filter_by_month("January")
-
-February <- filter_by_month("February")
 
 filter_by_month <- function(month){
   trimming_month %>% filter(release_month == month) %>% 
@@ -164,8 +164,29 @@ labs(y = "Number of Movies", x = "Year (1970-2023)",
 title = "Number of Movies by Month vs Time", color = "Legend") +
 theme(plot.title = element_text(hjust = 0.5)) + scale_color_manual(values = colors)
 
+ggplotly(movies_by_year_plot)
+
 server <- function(input, output){
   
 }
 
-ui <- fluidPage()
+ui <- fluidPage(
+  fluidRow(column(4, sliderInput("slider2", label = h3("Film Production Years"), 
+        min = January_final$release_year[1], 
+        max = January_final$release_year[54], 
+        value = c(January_final$release_year[1], January_final$release_year[54]),
+        step = 1, sep = ""),
+    )
+  ),
+hr(),
+  fluidRow(
+    column(4, verbatimTextOutput("value")),
+    column(4, verbatimTextOutput("range"))
+  )
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui = ui, server = server)
