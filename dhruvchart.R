@@ -168,21 +168,31 @@ theme(plot.title = element_text(hjust = 0.5)) + scale_color_manual(values = colo
 ggplotly(movies_by_year_plot)
 
 server <- function(input, output){
-  
 }
 
 ui <- fluidPage(
-  fluidRow(column(4, sliderInput("slider2", label = h3("Film Production Years"), 
-        min = January_final$release_year[1], 
-        max = January_final$release_year[54], 
-        value = c(January_final$release_year[1], January_final$release_year[54]),
-        step = 1, sep = ""),
+  titlePanel("Movie Production by Month over Time"),
+  sidebarLayout(
+      sidebarPanel(fluidRow(column(4, sliderInput("slider2", label = h3("Film Production Years"), 
+              min = January_final$release_year[1], max = January_final$release_year[54], 
+                  value = c(January_final$release_year[1], January_final$release_year[54]),
+                        step = 1, sep = "")
+        )
+      ),
+      hr(),
+      fluidRow(
+        column(4, verbatimTextOutput("value")),
+        column(4, verbatimTextOutput("range"))
+          )
+      ),
+      sidebarPanel(
+        selectInput("select", label = h3("Select Month"), 
+              choices = list("January" = 1, "February" = 2, "March" = 3, "April" = 4, 
+                      "May" = 5, "June" = 6, "July" = 7, "August" = 8, "September" = 9, 
+                          "October" = 10, "November" = 11, "December" = 12)), 
+        hr(),
+        fluidRow(column(3, verbatimTextOutput("value")))
     )
-  ),
-hr(),
-  fluidRow(
-    column(4, verbatimTextOutput("value")),
-    column(4, verbatimTextOutput("range"))
   )
 )
 
