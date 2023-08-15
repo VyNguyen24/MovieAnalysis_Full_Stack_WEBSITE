@@ -186,7 +186,7 @@ server <- function(input, output){
     }
     if (!is.null(input$movie_title_input) && input$movie_title_input != "") {
       filtered_movies <- filtered_movies %>%
-        filter(str_detect(Title, fixed(input$movie_title_input)))
+        filter(str_detect(Title, fixed(input$movie_title_input, ignore_case = TRUE)))
     }
     filtered_movies <- filtered_movies %>%
       filter(World.Sales..in... >= input$world_sales_slider[1] &
@@ -198,12 +198,13 @@ server <- function(input, output){
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
       scale_y_continuous(labels = scales::comma)
     
-    ggplotly(scatter_plot, tooltip = "text")
+    ggplotly(scatter_plot, tooltip = "text")  # Set tooltip to "text"
   })
+  
   output$movie_info_output <- renderPrint({
     if (!is.null(input$movie_title_input) && input$movie_title_input != "") {
       movie_info <- movie_data %>%
-        filter(str_detect(Title, fixed(input$movie_title_input))) %>%
+        filter(str_detect(Title, fixed(input$movie_title_input, ignore_case = TRUE))) %>%
         select(Movie.Info)
       if (nrow(movie_info) > 0) {
         movie_info$Movie.Info
@@ -212,6 +213,7 @@ server <- function(input, output){
       }
     }
   })
+  
   output$selected_movie_info <- renderUI({
     selected_distributor <- input$distributor_filter
     if (!is.null(selected_distributor) && selected_distributor != "All") {
