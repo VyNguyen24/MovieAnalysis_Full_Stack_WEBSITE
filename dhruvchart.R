@@ -33,7 +33,8 @@ library(data.table)
 ### Source: https://www.digitalocean.com/community/tutorials/r-melt-and-cast-function
 ### Source: https://www.statology.org/plot-multiple-columns-in-r/
 ### Source: https://stackoverflow.com/questions/44615406/error-in-as-data-frame-default-cannot-coerce-class-creactiveexpr-reactive
-
+### Source: https://uw.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=1411ba43-2dce-48c2-b3c7-b052016ca270
+### Source: https://uw.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=3f7708b9-fa00-4182-aba4-b057017603fd
 
 movies_data <- read.csv("Movies.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
