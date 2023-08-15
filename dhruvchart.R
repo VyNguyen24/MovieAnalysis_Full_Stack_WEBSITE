@@ -30,6 +30,10 @@ library(data.table)
 ### Source: https://stackoverflow.com/questions/60887910/how-to-include-all-the-observations-in-the-range-of-sliderinput-in-shiny-in-r
 ### Source: https://sparkbyexamples.com/r-programming/r-select-all-columns-except-column/#:~:text=To%20select%20all%20columns%20except,function%20from%20the%20dplyr%20package.
 ### Source: https://stackoverflow.com/questions/58448118/warning-jsonlite-in-shiny-input-to-asjsonkeep-vec-names-true-is-a-named-vecto
+### Source: https://www.digitalocean.com/community/tutorials/r-melt-and-cast-function
+### Source: https://www.statology.org/plot-multiple-columns-in-r/
+### Source: https://stackoverflow.com/questions/44615406/error-in-as-data-frame-default-cannot-coerce-class-creactiveexpr-reactive
+
 
 movies_data <- read.csv("Movies.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
@@ -138,34 +142,38 @@ December_final <- creating_plottable_df(December)
 ### http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf
 ### https://bookdown.org/yih_huynh/Guide-to-R-Book/graphing-with-different-datasets.html
 
-all_data_one_frame <- data.frame(January = January_final$n, February = February_final$n, 
-March = March_final$n, April = April_final$n, May = May_final$n, June = June_final$n, 
-July = July_final$n,August = August_final$n, September = September_final$n, 
-October = October_final$n, November = November_final$n, December = December_final$n)
-
-all_data_with_year <- all_data_one_frame %>% mutate(year = January_final$release_year)
+all_data_one_frame <- data.frame(
+  Month = rep(c("January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"), each = nrow(January_final)),
+  Year = rep(January_final$release_year, times = 12),
+  Count = c(January_final$n, February_final$n, March_final$n, April_final$n, May_final$n,
+            June_final$n, July_final$n, August_final$n, September_final$n,
+            October_final$n, November_final$n, December_final$n)
+)
 
 ui <- fluidPage(
   titlePanel("Movie Production by Month over Time"),
-      fluidRow(
-        column(width = 6, selectInput("select", label = h3("Select Month"), 
-            choices = colnames(all_data_one_frame)), plotOutput("month")
-        )
+  fluidRow(
+    column(width = 6, selectInput("select", label = h3("Select Month"), 
+                                  choices = unique(all_data_one_frame$Month)), 
+           plotlyOutput("month")
     )
+  )
 )
 
 server <- function(input, output) {
-  choose_month <- reactive({all_data_with_year %>% 
-      select(input$select)})
+  choose_month <- reactive({
+    all_data_one_frame %>% filter(Month == input$select)
+  })
+  
   output$month <- renderPlotly({
-    print(ggplotly(ggplot(choose_month, aes(x = year, y = input$select)) +
-               geom_line() +  labs(y = "Number of Movies", x = "Year (1970-2023)", 
-                        title = "Number of Movies by Month vs Time") + 
-                              theme(plot.title = element_text(hjust = 0.5)
-            )
-        )
+    ggplotly(
+      ggplot(choose_month(), aes(x = Year, y = Count)) +
+        geom_line() + 
+        labs(y = "Number of Movies", x = "Year (1970-2023)", 
+             title = "Number of Movies by Month vs Time") +
+        theme(plot.title = element_text(hjust = 0.5))
     )
-    
   }) 
 }
 
