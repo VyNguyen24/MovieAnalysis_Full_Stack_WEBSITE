@@ -19,10 +19,17 @@ library(data.table)
 ### Source: https://stackoverflow.com/questions/24011246/deleting-rows-that-are-duplicated-in-one-column-based-on-the-conditions-of-anoth
 ### Source: ### https://r-graph-gallery.com/line-chart-ggplot2.html
 ### Source: https://canvas.uw.edu/courses/1643812/files/folder/Lectures_PG?preview=108264142
+### Source: https://canvas.uw.edu/courses/1643812/files/folder/Lectures_PG?preview=108374725
 ### Source: https://shiny.posit.co/r/gallery/widgets/widget-gallery/
 ### Source: https://shiny.posit.co/r/reference/shiny/1.7.4/sliderinput
 ### Source: https://gallery.shinyapps.io/081-widgets-gallery/
 ### Source: https://stackoverflow.com/questions/24173595/r-shiny-using-a-slider-value-to-no-decimal-places
+### Source: https://www.statology.org/r-get-column-names/#:~:text=To%20get%20the%20column%20names%20in%20a%20data%20frame%20in,What%20is%20this%3F&text=points%22%20%22team%22-,The%20result%20is%20a%20vector%20that%20contains%20all%20four%20column,frame%20listed%20in%20alphabetical%20order.
+### Source: https://stackoverflow.com/questions/35040781/alignment-of-control-widgets-on-fluidpage-in-shiny-r
+### Source: https://stackoverflow.com/questions/65472014/how-can-i-make-an-interactive-line-graph-through-shiny
+### Source: https://stackoverflow.com/questions/60887910/how-to-include-all-the-observations-in-the-range-of-sliderinput-in-shiny-in-r
+### Source: https://sparkbyexamples.com/r-programming/r-select-all-columns-except-column/#:~:text=To%20select%20all%20columns%20except,function%20from%20the%20dplyr%20package.
+### Source: https://stackoverflow.com/questions/58448118/warning-jsonlite-in-shiny-input-to-asjsonkeep-vec-names-true-is-a-named-vecto
 
 movies_data <- read.csv("Movies.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
@@ -131,73 +138,35 @@ December_final <- creating_plottable_df(December)
 ### http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf
 ### https://bookdown.org/yih_huynh/Guide-to-R-Book/graphing-with-different-datasets.html
 
-colors <- c("January" = "purple", "February" = "green","March" = "red", 
-            "April" = "lightskyblue", "May" = "orange", "June" = "black", 
-            "July" = "chocolate4", "August" = "darkturquoise", "September" = "forestgreen", 
-            "October" = "hotpink", "November" = "blue", "December" = "seashell4")
+all_data_one_frame <- data.frame(January = January_final$n, February = February_final$n, 
+March = March_final$n, April = April_final$n, May = May_final$n, June = June_final$n, 
+July = July_final$n,August = August_final$n, September = September_final$n, 
+October = October_final$n, November = November_final$n, December = December_final$n)
 
-movies_by_year_plot <- ggplot() +
-geom_line(data = January_final, aes(x = January_final$release_year, y = January_final$n,
-color = "January"), size = 1, linetype = 1) + 
-geom_line(data = February_final, aes(x = February_final$release_year, y = February_final$n, 
-color = "February"), size = 1, linetype = 1) + 
-geom_line(data = March_final, aes(x = March_final$release_year, y = March_final$n, 
-color = "March"), size = 1, linetype = 1) + 
-geom_line(data = April_final, aes(x = April_final$release_year, y = April_final$n, 
-color = "April"), size = 1, linetype = 1) + 
-geom_line(data = May_final, aes(x = May_final$release_year, y = May_final$n,
-color = "May"), size = 1, linetype = 1) + 
-geom_line(data = June_final, aes(x = June_final$release_year, y = June_final$n,
-color = "June"), size = 1, linetype = 1) +   
-geom_line(data = July_final, aes(x = July_final$release_year, y = July_final$n,
-color = "July"), size = 1, linetype = 1) + 
-geom_line(data = August_final, aes(x = August_final$release_year, y = August_final$n,
-color = "August"), size = 1, linetype = 1) + 
-geom_line(data = September_final, aes(x = September_final$release_year, y = September_final$n,
-color = "September"), size = 1, linetype = 1) + 
-geom_line(data = October_final, aes(x = October_final$release_year, y = October_final$n,
-color = "October"), size = 1, linetype = 1) + 
-geom_line(data = November_final, aes(x = November_final$release_year, y = November_final$n,
-color = "November"), size = 1, linetype = 1) + 
-geom_line(data = December_final, aes(x = December_final$release_year, y = December_final$n,
-color = "December"), size = 1, linetype = 1) + 
-labs(y = "Number of Movies", x = "Year (1970-2023)", 
-title = "Number of Movies by Month vs Time", color = "Legend") +
-theme(plot.title = element_text(hjust = 0.5)) + scale_color_manual(values = colors)
-
-ggplotly(movies_by_year_plot)
-
-server <- function(input, output){
-}
+all_data_with_year <- all_data_one_frame %>% mutate(year = January_final$release_year)
 
 ui <- fluidPage(
   titlePanel("Movie Production by Month over Time"),
-  sidebarLayout(
-      sidebarPanel(fluidRow(column(4, sliderInput("slider2", label = h3("Film Production Years"), 
-              min = January_final$release_year[1], max = January_final$release_year[54], 
-                  value = c(January_final$release_year[1], January_final$release_year[54]),
-                        step = 1, sep = "")
-        )
-      ),
-      hr(),
       fluidRow(
-        column(4, verbatimTextOutput("value")),
-        column(4, verbatimTextOutput("range"))
-          )
-      ),
-      sidebarPanel(
-        selectInput("select", label = h3("Select Month"), 
-              choices = list("January" = 1, "February" = 2, "March" = 3, "April" = 4, 
-                      "May" = 5, "June" = 6, "July" = 7, "August" = 8, "September" = 9, 
-                          "October" = 10, "November" = 11, "December" = 12)), 
-        hr(),
-        fluidRow(column(3, verbatimTextOutput("value")))
+        column(width = 6, selectInput("select", label = h3("Select Month"), 
+            choices = colnames(all_data_one_frame)), plotOutput("month")
+        )
     )
-  )
 )
 
-server <- function(input, output, session) {
-  
+server <- function(input, output) {
+  choose_month <- reactive({all_data_with_year %>% 
+      select(input$select)})
+  output$month <- renderPlotly({
+    print(ggplotly(ggplot(choose_month, aes(x = year, y = input$select)) +
+               geom_line() +  labs(y = "Number of Movies", x = "Year (1970-2023)", 
+                        title = "Number of Movies by Month vs Time") + 
+                              theme(plot.title = element_text(hjust = 0.5)
+            )
+        )
+    )
+    
+  }) 
 }
 
 shinyApp(ui = ui, server = server)
