@@ -20,7 +20,17 @@ distributor_data <- data %>%
   group_by(Distributor) %>%
   mutate(num_movies = n())
 
+convert_runtime <- function(runtime_string) {
+  hours <- as.numeric(sub(".*?(\\d+) hr.*", "\\1", runtime_string, ignore.case = TRUE))
+  minutes <- as.numeric(sub(".*?(\\d+) min.*", "\\1", runtime_string, ignore.case = TRUE))
+  total_minutes <- hours * 60 + minutes
+  return(total_minutes)
+}
+
 movie_data <- read.csv("Movies.csv")
+
+movie_data <- movie_data %>%
+  mutate(Total.Minutes = sapply(Movie.Runtime, convert_runtime))
 
 movies_data <- read.csv("Movies.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
@@ -121,12 +131,14 @@ November_final <- creating_plottable_df(November)
 
 December_final <- creating_plottable_df(December)
 
-all_data_one_frame <- data.frame(January = January_final$n, February = February_final$n, 
-March = March_final$n, April = April_final$n, May = May_final$n, June = June_final$n, 
-July = July_final$n,August = August_final$n, September = September_final$n, 
-October = October_final$n, November = November_final$n, December = December_final$n)
-
-all_data_with_year <- all_data_one_frame %>% mutate(year = January_final$release_year)
+all_data_one_frame <- data.frame(
+  Month = rep(c("January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"), each = nrow(January_final)),
+  Year = rep(January_final$release_year, times = 12),
+  Count = c(January_final$n, February_final$n, March_final$n, April_final$n, May_final$n,
+            June_final$n, July_final$n, August_final$n, September_final$n,
+            October_final$n, November_final$n, December_final$n)
+)
 
 ui <- navbarPage("Creating The Optimal Movie", 
               
@@ -241,20 +253,17 @@ tabPanel("Introduction",  fluidPage(
       display."),
     p("By doing this, we are able to see how many movies each distributor is distributing.
       With all three of these interactive widgets, we were able to compare the quantity of films
-      released by various distributors in more detail.")
+      released through number of films, the distributors, and the license.")
     )
   ),
 
 ### Stuff for 3rd tab
 
-  tabPanel("Distributor vs Movie World Sales", fluidPage(
-    titlePanel("Top 100 Movies by World Sales"),
+  tabPanel("Movie Runtime vs Movie World Sales", fluidPage(
+    titlePanel("Movies: World Sales vs. Movie Runtime"),
     
     sidebarLayout(
       sidebarPanel(
-        selectInput("distributor_filter", "Filter by Distributor:", 
-                    choices = c("All", unique(movie_data$Distributor))),
-        textInput("movie_title_input", "Enter Movie Title:"),
         sliderInput("world_sales_slider", "World Sales Range:",
                     min = min(movie_data$World.Sales..in...),
                     max = max(movie_data$World.Sales..in...),
@@ -263,7 +272,7 @@ tabPanel("Introduction",  fluidPage(
         uiOutput("selected_movie_info")
       ),
       mainPanel(
-        plotlyOutput("top_movies_scatter_plot"),
+        plotlyOutput("world_sales_vs_runtime_scatter_plot"), 
         verbatimTextOutput("movie_info_output")
       )
     ),
@@ -293,19 +302,19 @@ tabPanel("Introduction",  fluidPage(
       information to a potential film director on which movie rating to design/cater to 
       based on the highest mean influx of money worldwide (based on the top 1000 
       domestically highest-performing movies recorded."),
-      p("While all of the movie licenses make the same income on the scale of hundreds of 
-      millions (according to this dataset), rated R movies from this dataset perform the 
-      lowest in terms of mean worldwide sales. G-rated and PG-13-rated films from this 
-      dataset averaged almost identically with PG-rated films from this dataset, 
-      averaging slightly less."),
-      p("The main takeaway from this bar graph is that according to this dataset, a film 
-      director designing a movie script for any of these 4 ratings will make money on the 
-      same scale, but to optimize worldwide sales, they should significantly prioritize G 
-      & PG-13-rated films over R-rated films.")
     )
   )
 ),
-tabPanel("Movie Production by Month over time"),
+tabPanel("Movie Production by Month over time", fluidPage(
+  titlePanel("Movie Production by Month over Time"),
+  fluidRow(
+    column(width = 6, selectInput("select", label = h3("Select Month"), 
+                                  choices = unique(all_data_one_frame$Month)), 
+           plotlyOutput("month")
+      )
+    )
+  )
+),
 tabPanel("Genre vs Movie World Sales", fluidPage(
   titlePanel("Genre vs Movie World Sales"),
   mainPanel(
@@ -329,8 +338,17 @@ tabPanel("Summary", fluidPage(
     mainPanel(
         plotlyOutput("dhruv_plot"),
         p(""),
+        p("The main takeaway from this bar graph is that according to this dataset, a film 
+ director designing a movie script for any of these 4 ratings will make money on the 
+ same scale, but to optimize worldwide sales, they should significantly prioritize G, PG 
+ & PG-13-rated films over R-rated films."),
         plotlyOutput("pagna_bar_chart"),
         p(""),
+        p("Out of all the individual genres in each dataset (and there were movies tagged with 
+          multiple), 'adventure' and 'action' were correlated with by far the two highest world 
+          sale incomes. Thus, a film director planning a movie should do so with the intention 
+          of an adventure or action theme, because the two genres have significant overlap and 
+          yield a lot of money in overall world sales."),
         plotlyOutput("vy_plot"),
         p("")
       )
